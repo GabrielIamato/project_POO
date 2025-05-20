@@ -3,25 +3,33 @@ package Modelo;
 import Auxiliar.Desenho;
 import java.util.Random;
 
-public class ZigueZague extends Personagem{
+
+public class ZigueZague extends Perseguidor{
     
-    public ZigueZague(String sNomeImagePNG) {
-        super(sNomeImagePNG);
+    public ZigueZague(String sNomeImagePNG, int intervaloMovimento) {
+        super(sNomeImagePNG, intervaloMovimento);
     }
 
-    public void autoDesenho(){
-        Random rand = new Random();
-        int iDirecao = rand.nextInt(4);
-        
-        if(iDirecao == 1)
-            this.setPosicao(pPosicao.getLinha(), pPosicao.getColuna()+1);
-        else if(iDirecao == 2)
-            this.setPosicao(pPosicao.getLinha()+1, pPosicao.getColuna());
-        else if(iDirecao == 3)
-            this.setPosicao(pPosicao.getLinha(), pPosicao.getColuna()-1);
-        else if(iDirecao == 4)
-            this.setPosicao(pPosicao.getLinha()-1, pPosicao.getColuna());
-        
-        super.autoDesenho();
-    }    
+    @Override
+    public void autoDesenho() {
+        super.autoDesenho();  // desenha sempre
+
+        this.iContaIntervalos++;
+        if (this.iContaIntervalos == this.intervaloMovimento) {
+            this.iContaIntervalos = 0;
+
+            Random rand = new Random();
+            int iDirecao = rand.nextInt(4);
+
+            if(iDirecao == 0)
+                moveUp();
+            else if(iDirecao == 1)
+                moveDown();
+            else if(iDirecao == 2)
+                moveLeft();
+            else
+                moveRight();
+        }  
+}
+    
 }

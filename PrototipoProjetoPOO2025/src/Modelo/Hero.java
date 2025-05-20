@@ -13,6 +13,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class Hero extends Personagem implements Serializable{
+    
+    private boolean vivo = true;
+
+    public boolean isVivo() {
+        return vivo;
+    }
+
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
+    }
     public Hero(String sNomeImagePNG) {
         super(sNomeImagePNG);
     }

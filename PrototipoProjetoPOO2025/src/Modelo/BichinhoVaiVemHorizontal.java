@@ -13,18 +13,46 @@ import javax.swing.JPanel;
 
 public class BichinhoVaiVemHorizontal extends Personagem  implements Serializable{
     private boolean bRight;
-
-    public BichinhoVaiVemHorizontal(String sNomeImagePNG) {
+    private int iContaIntervalos;
+    private int intervaloMovimento;
+    
+    private int passosMaximos;    // Quantidade de passos para cada lado
+    private int passosDados;      // Quantos passos já andou na direção atual
+    
+    public BichinhoVaiVemHorizontal(String sNomeImagePNG, int intervaloMovimento, int passosMaximos) {
         super(sNomeImagePNG);
-        bRight = true;
+        this.bRight = true;
+        this.iContaIntervalos = 0;
+        this.intervaloMovimento = intervaloMovimento;
+        this.passosMaximos = passosMaximos;
     }
-    public void autoDesenho(){
-        if(bRight)
-            this.setPosicao(pPosicao.getLinha(), pPosicao.getColuna()+1);
-        else
-            this.setPosicao(pPosicao.getLinha(), pPosicao.getColuna()-1);           
-
+    public void autoDesenho() {
         super.autoDesenho();
-        bRight = !bRight;
+
+        iContaIntervalos++;
+        if (iContaIntervalos < intervaloMovimento)
+            return;
+
+        iContaIntervalos = 0;
+
+        boolean moveu;
+        if (bRight) {
+            moveu = this.moveRight();
+        } else {
+            moveu = this.moveLeft();
+        }
+
+        if (moveu) {
+            passosDados++;
+            if (passosDados >= passosMaximos) {
+                passosDados = 0;
+                bRight = !bRight; // Inverte direção após X passos
+            }
+        } else {
+            // Se bateu em obstáculo, muda a direção mesmo que não tenha terminado os passos
+            passosDados = 0;
+            bRight = !bRight;
+        }
     }
 }
+

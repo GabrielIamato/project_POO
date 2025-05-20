@@ -8,19 +8,22 @@ import java.awt.Graphics;
 import java.io.Serializable;
 
 public class Perseguidor extends Personagem implements Serializable{
-    private int iContaIntervalos;
+    protected int iContaIntervalos;
+    protected int intervaloMovimento;
     
-    public Perseguidor(String sNomeImagePNG) {
+    public Perseguidor(String sNomeImagePNG, int intervaloMovimento) {
         super(sNomeImagePNG);
         this.bTransponivel = true;
         this.bMortal = true;
         this.iContaIntervalos = 0;
+        this.intervaloMovimento = intervaloMovimento;
     }
+
     public void autoDesenho(Posicao Posicao_Hero) {
     super.autoDesenho();
 
     this.iContaIntervalos++;
-    if (this.iContaIntervalos == Consts.TIMER) {
+    if (this.iContaIntervalos == this.intervaloMovimento) {
         this.iContaIntervalos = 0;
 
         int linhaHero = Posicao_Hero.getLinha();
@@ -32,21 +35,54 @@ public class Perseguidor extends Personagem implements Serializable{
 
         // Movimento vertical prioritário
         if (linhaHero < linhaAtual) {
-            moveu = this.pPosicao.moveUp();
+            moveu = this.moveUp();
         } else if (linhaHero > linhaAtual) {
-            moveu = this.pPosicao.moveDown();
+            moveu = this.moveDown();
         }
 
         // Se não moveu na vertical, tenta mover na horizontal
         if (!moveu) {
             if (colunaHero < colunaAtual) {
-                moveu = this.pPosicao.moveLeft();
+                moveu = this.moveLeft();
             } else if (colunaHero > colunaAtual) {
-                moveu = this.pPosicao.moveRight();
+                moveu = this.moveRight();
             }
         }
     }
+    
 }
+   public void voltaAUltimaPosicao(){
+        this.pPosicao.volta();
+   }
+  private boolean validaPosicao(){
+        if (!Desenho.acessoATelaDoJogo().ehPosicaoValidaPersonagem(this.getPosicao())) {
+            this.voltaAUltimaPosicao();
+            return false;
+        }
+        return true;       
+   }
+  public boolean moveUp() {
+        if(super.moveUp())
+            return validaPosicao();
+        return false;
+    }
 
+    public boolean moveDown() {
+        if(super.moveDown())
+            return validaPosicao();
+        return false;
+    }
+
+    public boolean moveRight() {
+        if(super.moveRight())
+            return validaPosicao();
+        return false;
+    }
+
+    public boolean moveLeft() {
+        if(super.moveLeft())
+            return validaPosicao();
+        return false;
+    } 
  }    
 

@@ -20,11 +20,12 @@ public abstract class Personagem implements Serializable {
     protected Posicao pPosicao;
     protected boolean bTransponivel; /*Pode passar por cima?*/
     protected boolean bMortal;       /*Se encostar, morre?*/
-
+    protected boolean bVisivel;
 
     protected Personagem(String sNomeImagePNG) {
         this.pPosicao = new Posicao(1, 1);
         this.bTransponivel = true;
+        this.bVisivel = true;
         this.bMortal = false;
         try {
             iImage = new ImageIcon(new java.io.File(".").getCanonicalPath() + Consts.PATH + sNomeImagePNG);
@@ -44,6 +45,14 @@ public abstract class Personagem implements Serializable {
         return pPosicao;
     }
 
+    public boolean isbVisivel() {
+        return bVisivel;
+    }
+
+    public void setbVisivel(boolean bVisivel) {
+        this.bVisivel = bVisivel;
+    }
+
     public boolean isbTransponivel() {
         return bTransponivel;
     }
@@ -51,9 +60,18 @@ public abstract class Personagem implements Serializable {
     public void setbTransponivel(boolean bTransponivel) {
         this.bTransponivel = bTransponivel;
     }
+    
+     public boolean isbMortal() {
+        return bMortal;
+    }
 
+     public void setbMortal(boolean bMortal) {
+        this.bMortal = bMortal;
+    }
     public void autoDesenho(){
-        Desenho.desenhar(this.iImage, this.pPosicao.getColuna(), this.pPosicao.getLinha());        
+        if(this.bVisivel){
+            Desenho.desenhar(this.iImage, this.pPosicao.getColuna(), this.pPosicao.getLinha());        
+        }
     }
 
     public boolean setPosicao(int linha, int coluna) {

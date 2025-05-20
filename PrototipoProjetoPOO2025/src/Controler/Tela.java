@@ -1,10 +1,14 @@
 package Controler;
 
 import Modelo.Personagem;
+import Modelo.Bomba;
 import Modelo.Caveira;
+import Modelo.Parede;
 import Modelo.Hero;
 import Modelo.BichinhoVaiVemHorizontal;
 import Modelo.Perseguidor;
+import Modelo.Cadeado;
+import Modelo.Chave;
 import Auxiliar.Consts;
 import Auxiliar.Desenho;
 import Modelo.ZigueZague;
@@ -53,33 +57,117 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         this.setSize(Consts.RES * Consts.CELL_SIDE + getInsets().left + getInsets().right,
                 Consts.RES * Consts.CELL_SIDE + getInsets().top + getInsets().bottom);
 
+        
         faseAtual = new ArrayList<Personagem>();
-
-        /*Cria faseAtual adiciona personagens*/
         hero = new Hero("skoot.png");
-        hero.setPosicao(0, 7);
+        hero.setPosicao(4, 4);
+        
         this.addPersonagem(hero);
         this.atualizaCamera();
-
-        ZigueZague zz = new ZigueZague("robo.png");
-        zz.setPosicao(5, 5);
+        desenhaFase(1);
+        /*Cria faseAtual adiciona personagens*/
+        
+   
+        ZigueZague zz = new ZigueZague("robo.png", 5);
+        zz.setPosicao(10, 10);
         this.addPersonagem(zz);
 
-        BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png");
+       /* BichinhoVaiVemHorizontal bBichinhoH = new BichinhoVaiVemHorizontal("roboPink.png", 5, 1);
         bBichinhoH.setPosicao(3, 3);
-        this.addPersonagem(bBichinhoH);
-
-        BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png");
+        this.addPersonagem(bBichinhoH);*/
+        
+        BichinhoVaiVemHorizontal guarda = new BichinhoVaiVemHorizontal("guardinha.jpg", 3, 3);
+        guarda.setPosicao(9,10);
+        guarda.setbMortal(true);
+        this.addPersonagem(guarda);
+       
+        Bomba bomba = new Bomba("bomba.jpg");
+        bomba.setPosicao(5,5);
+        this.addPersonagem(bomba);
+        
+        Chave chave_1 = new Chave("chave.jpg");
+        chave_1.setPosicao(3,4);
+        this.addPersonagem(chave_1);
+        
+        Chave chave_2 = new Chave("chave.jpg");
+        chave_2.setPosicao(3,6);
+        this.addPersonagem(chave_2);
+        
+        
+        Cadeado cadeado = new Cadeado("cadeado.png");
+        cadeado.setPosicao(2,4);
+        this.addPersonagem(cadeado);
+        
+        cadeado.adicionarChave(chave_1);
+        cadeado.adicionarChave(chave_2);
+       
+        
+        Chave chave_saida1 = new Chave("moeda.jpg");
+        chave_saida1.setPosicao(6,8);
+        this.addPersonagem(chave_saida1);
+        
+        Chave chave_saida2 = new Chave("moeda.jpg");
+        chave_saida2.setPosicao(6,12);
+        this.addPersonagem(chave_saida2);
+        
+        Cadeado saida= new Cadeado("saída.png");
+        saida.setPosicao(9,6);
+        saida.setSaida(true);
+        this.addPersonagem(saida);
+        
+        saida.adicionarChave(chave_saida1);
+        saida.adicionarChave(chave_saida2);
+                
+        
+        
+       // chave_1.setColetada(true);
+        //chave_2.setColetada(true);
+        /*BichinhoVaiVemHorizontal bBichinhoH2 = new BichinhoVaiVemHorizontal("roboPink.png", 5 , 1);
         bBichinhoH2.setPosicao(6, 6);
-        this.addPersonagem(bBichinhoH2);
+        this.addPersonagem(bBichinhoH2);*/
 
         Caveira bV = new Caveira("caveira.png");
-        bV.setPosicao(9, 1);
+        bV.setPosicao(7, 1);
         this.addPersonagem(bV);
-        
-        Perseguidor perseguidor = new Perseguidor("monstro.png");
-        perseguidor.setPosicao(3,5);
+        ////
+       Perseguidor perseguidor = new Perseguidor("monstro.png", 5);
+        perseguidor.setPosicao(3,6);
         this.addPersonagem(perseguidor);
+    }
+    
+    private ArrayList<Posicao> gerarParedesLabirinto() {
+        ArrayList<Posicao> paredes = new ArrayList<>();
+
+        // Cria paredes nas bordas
+        for (int i = 0; i < 30; i++) {
+            paredes.add(new Posicao(0, i));        // topo
+            paredes.add(new Posicao(29, i));       // base
+            paredes.add(new Posicao(i, 0));        // esquerda
+            paredes.add(new Posicao(i, 29));       // direita
+        }
+
+        // Adiciona algumas paredes internas (exemplo em forma de labirinto simples)
+        for (int i = 2; i < 28; i += 2) {
+            for (int j = 2; j < 28; j++) {
+                if (j % 4 != 0) {
+                    paredes.add(new Posicao(i, j));
+                }
+            }
+        }
+
+        return paredes;
+    }
+
+    public void desenhaFase(int numFase) {
+    if (numFase == 1) {
+        ArrayList<Posicao> posicoesParedes = gerarParedesLabirinto();
+        
+        for (Posicao pos : posicoesParedes) {
+            Parede parede = new Parede("parede.jpg");
+            parede.setPosicao(pos.getLinha(), pos.getColuna());
+            this.addPersonagem(parede);
+        }
+    }
     }
 
     public int getCameraLinha() {
@@ -92,6 +180,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
 
     public boolean ehPosicaoValida(Posicao p) {
         return cj.ehPosicaoValida(this.faseAtual, p);
+    }
+    
+    public boolean ehPosicaoValidaPersonagem(Posicao p){
+        return cj.ehPosicaoValidaPersonagem(this.faseAtual, p);
     }
 
     public void addPersonagem(Personagem umPersonagem) {
@@ -154,6 +246,10 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
     public void go() {
         TimerTask task = new TimerTask() {
             public void run() {
+                 if(!hero.isVivo()){
+                    gameOver();
+                    return;
+                }
                 repaint();
             }
         };
@@ -193,6 +289,11 @@ public class Tela extends javax.swing.JFrame implements MouseListener, KeyListen
         repaint();
     }
 
+    public void gameOver() {
+    javax.swing.JOptionPane.showMessageDialog(this, "Fim de jogo!");
+    this.dispose();
+    System.exit(0);
+}
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
